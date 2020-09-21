@@ -7,7 +7,18 @@
 using std::vector;
 
 void EvenOdd(vector<int>* A_ptr) {
-  // TODO - you fill in here.
+  // time O(n), space O(1)
+  int even_index = 0;
+  int odd_index = A_ptr->size() - 1;
+
+  while (even_index < odd_index)
+  {
+    if (A_ptr->at(even_index) % 2 == 0)
+      ++even_index;
+    else
+      std::swap(A_ptr->at(even_index), A_ptr->at(odd_index--));
+  }
+
   return;
 }
 void EvenOddWrapper(TimedExecutor& executor, vector<int> A) {

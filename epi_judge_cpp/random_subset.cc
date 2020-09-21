@@ -3,6 +3,7 @@
 #include <iterator>
 #include <numeric>
 #include <vector>
+#include <random>
 
 #include "test_framework/generic_test.h"
 #include "test_framework/random_sequence_checker.h"
@@ -12,8 +13,46 @@ using std::iota;
 using std::vector;
 // Returns a random k-sized subset of {0, 1, ..., n - 1}.
 vector<int> RandomSubset(int n, int k) {
-  // TODO - you fill in here.
-  return {};
+  // time O(k), space O(k)
+  std::unordered_map<int, int> changed_elements;
+  std::default_random_engine seed((std::random_device())());
+
+  for (int i = 0; i < k; ++i)
+  {
+    int random_index = std::uniform_int_distribution<int>{ i, n - 1 }(seed);
+    auto ptr_1 = changed_elements.find(random_index);
+    auto ptr_2 = changed_elements.find(i);
+
+    if (ptr_1 == changed_elements.end() && ptr_1 == changed_elements.end())
+    {
+      // Neither index is in changed_elements
+      changed_elements[random_index] = i;
+      changed_elements[i] = random_index;
+    }
+    else if (ptr_1 == changed_elements.end() && ptr_2 != changed_elements.end())
+    {
+      changed_elements[random_index] = ptr_2->second;
+      ptr_2->second = random_index;
+    }
+    else if (ptr_1 != changed_elements.end() && ptr_2 == changed_elements.end())
+    {
+      changed_elements[i] = ptr_1->second;
+      ptr_1->second = i;
+    }
+    else
+    {
+      int temp = ptr_2->second;
+      changed_elements[i] = ptr_1->second;
+      changed_elements[random_index] = temp;
+    }
+  }
+
+  std::vector<int> result;
+  result.reserve(k);
+  for (int i = 0; i < k; ++i)
+    result.emplace_back(changed_elements[i]);
+
+  return result;
 }
 bool RandomSubsetRunner(TimedExecutor& executor, int n, int k) {
   using namespace test_framework;

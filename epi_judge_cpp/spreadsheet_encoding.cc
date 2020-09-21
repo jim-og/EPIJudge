@@ -4,8 +4,8 @@
 using std::string;
 
 int SSDecodeColID(const string& col) {
-  // TODO - you fill in here.
-  return 0;
+  // time O(n), space O(1)
+  return std::accumulate(col.begin(), col.end(), 0, [](int sum, char c) {return sum * 26 + (c - 64); });
 }
 
 int main(int argc, char* argv[]) {

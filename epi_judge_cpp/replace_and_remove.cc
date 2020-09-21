@@ -7,9 +7,41 @@
 using std::string;
 using std::vector;
 
+// Remove 'b's, replace 'a's with 'dd'
+
 int ReplaceAndRemove(int size, char s[]) {
-  // TODO - you fill in here.
-  return 0;
+  // time O(n), space (1)
+
+  // Forward iteration, remove 'b's and count the number of 'a's
+  int write_index = 0, a_count = 0;
+  for (int i = 0; i < size; ++i)
+  {
+    if (s[i] != 'b')
+      s[write_index++] = s[i];
+    if (s[i] == 'a')
+      ++a_count;
+  }
+
+  // Backward iteration, replace 'a's with 'dd'
+  int curr_index = write_index - 1;
+  write_index += a_count - 1;
+  const int final_size = write_index + 1;
+
+  while (curr_index >= 0)
+  {
+    if (s[curr_index] == 'a')
+    {
+      s[write_index--] = 'd';
+      s[write_index--] = 'd';
+    }
+    else
+    {
+      s[write_index--] = s[curr_index];
+    }
+    --curr_index;
+  }
+
+  return final_size;
 }
 vector<string> ReplaceAndRemoveWrapper(TimedExecutor& executor, int size,
                                        const vector<string>& s) {

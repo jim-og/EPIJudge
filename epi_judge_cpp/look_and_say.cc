@@ -3,9 +3,29 @@
 #include "test_framework/generic_test.h"
 using std::string;
 
+std::string NextNumber(const std::string & s)
+{
+  // time O(n*2^n)
+  std::string result;
+  for (int i = 0; i < s.size(); ++i)
+  {
+    int count = 1;
+    while (i + 1 < size(s) && s[i] == s[i + 1])
+      ++i, ++count;
+    result += std::to_string(count) + s[i];
+  }
+
+  return result;
+}
+
 string LookAndSay(int n) {
-  // TODO - you fill in here.
-  return "";
+  
+  std::string s = "1";
+
+  for (int i = 1; i < n; ++i)
+    s = NextNumber(s);
+
+  return s;
 }
 
 int main(int argc, char* argv[]) {

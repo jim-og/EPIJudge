@@ -2,8 +2,22 @@
 
 #include "test_framework/generic_test.h"
 using std::string;
+
+// A man, a plan, a canal, Panama
 bool IsPalindrome(const string& s) {
-  // TODO - you fill in here.
+  // time O(n), space O(1)
+  int i = 0, j = s.size() - 1;
+
+  while (i < j)
+  {
+    while (!std::isalnum(s[i]) && i < j)
+      ++i;
+    while (!std::isalnum(s[j]) && i < j)
+      --j;
+    if (std::tolower(s[i++]) != std::tolower(s[j--]))
+      return false;
+  }
+
   return true;
 }
 
