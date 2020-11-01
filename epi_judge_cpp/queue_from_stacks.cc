@@ -9,13 +9,27 @@ using std::length_error;
 class Queue {
  public:
   void Enqueue(int x) {
-    // TODO - you fill in here.
+    enqueue_.emplace(x);
     return;
   }
   int Dequeue() {
-    // TODO - you fill in here.
-    return 0;
+    if (dequeue_.empty())
+    {
+      // Move enqueue_ entries to dequeue_
+      while (!enqueue_.empty())
+      {
+        dequeue_.emplace(enqueue_.top());
+        enqueue_.pop();
+      }
+    }
+    
+    int result = dequeue_.top();
+    dequeue_.pop();
+    return result;
   }
+
+protected:
+  std::stack<int> enqueue_, dequeue_;
 };
 struct QueueOp {
   enum class Operation { kConstruct, kDequeue, kEnqueue } op;
@@ -23,7 +37,7 @@ struct QueueOp {
 
   QueueOp(const std::string& op_string, int arg) : argument(arg) {
     if (op_string == "Queue") {
-      op = Operation::kConstruct;
+      op = Operation::kConstruct; 
     } else if (op_string == "dequeue") {
       op = Operation::kDequeue;
     } else if (op_string == "enqueue") {

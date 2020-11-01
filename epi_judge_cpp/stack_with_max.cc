@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <stack>
 
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
@@ -8,21 +9,25 @@ using std::length_error;
 class Stack {
  public:
   bool Empty() const {
-    // TODO - you fill in here.
-    return true;
+    return element_with_cached_max_.empty();
   }
   int Max() const {
-    // TODO - you fill in here.
-    return 0;
+    return element_with_cached_max_.top().max;
   }
   int Pop() {
-    // TODO - you fill in here.
-    return 0;
+    int entry = element_with_cached_max_.top().element;
+    element_with_cached_max_.pop();
+    return entry;
   }
   void Push(int x) {
-    // TODO - you fill in here.
+    element_with_cached_max_.emplace(ElementWithCachedMax{ x, Empty() ? x : std::max(x, Max()) });
     return;
   }
+private:
+  struct ElementWithCachedMax {
+    int element, max;
+  };
+  std::stack<ElementWithCachedMax> element_with_cached_max_;
 };
 struct StackOp {
   std::string op;

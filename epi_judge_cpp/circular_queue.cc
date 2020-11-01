@@ -3,19 +3,45 @@
 #include "test_framework/test_failure.h"
 class Queue {
  public:
-  Queue(size_t capacity) {}
+  Queue(size_t capacity)
+    : entries_(capacity)
+    , kScaleFactor(2)
+    , head_(0)
+    , tail_(0)
+    , num_queue_elements_(0)
+  {}
+
   void Enqueue(int x) {
-    // TODO - you fill in here.
+    if (num_queue_elements_ == entries_.size())
+    { // Need to resize
+      // Rotate entries to appear consecutively
+      std::rotate(entries_.begin(), entries_.begin() + head_, entries_.end());
+      head_ = 0;
+      tail_ = num_queue_elements_;
+      entries_.resize(entries_.size() * kScaleFactor);
+    }
+
+    entries_[tail_] = x;
+    tail_ = (tail_ + 1) % entries_.size();
+    ++num_queue_elements_;
     return;
   }
   int Dequeue() {
-    // TODO - you fill in here.
-    return 0;
+    --num_queue_elements_;
+    int result = entries_[head_];
+    head_ = (head_ + 1) % entries_.size();
+    return result;
   }
   int Size() const {
-    // TODO - you fill in here.
-    return 0;
+    return num_queue_elements_;
   }
+
+protected:
+  const int kScaleFactor;
+  int head_;
+  int tail_;
+  int num_queue_elements_;
+  std::vector<int> entries_;
 };
 struct QueueOp {
   enum class Operation { kConstruct, kDequeue, kEnqueue, kSize } op;

@@ -3,6 +3,30 @@
 
 shared_ptr<ListNode<int>> ReverseSublist(shared_ptr<ListNode<int>> L, int start,
                                          int finish) {
+
+  class Point
+  {
+  public:
+    Point(double x, double y) { x_ = x, y_ = y; }
+    ~Point() {};
+    double GetX() { return x_; }
+    double GetY() { return y_; }
+  private:
+    double x_;
+    double y_;
+  };
+
+
+
+  std::vector<Point> points;
+  for (double i=0.0; i < 10.0; i++)
+    points.emplace_back(Point(i, i+5.0));
+
+  double value = 7.0;
+
+  auto test = std::lower_bound(points.begin(), points.end(), value, [](Point & point, double rhs) {return point.GetY() < rhs;});
+
+
   shared_ptr<ListNode<int>> dummy_head = make_shared<ListNode<int>>(ListNode<int>{0, L});
   shared_ptr<ListNode<int>> sublist_head = dummy_head;
 

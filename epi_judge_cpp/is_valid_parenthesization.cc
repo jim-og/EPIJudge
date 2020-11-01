@@ -1,10 +1,30 @@
 #include <string>
+#include <stack>
+#include <unordered_map>
 
 #include "test_framework/generic_test.h"
 using std::string;
 bool IsWellFormed(const string& s) {
-  // TODO - you fill in here.
-  return true;
+  std::stack<char> left_chars;
+
+  std::unordered_map<char, char> lookup = {
+    {'(', ')'},
+    {'[', ']'},
+    {'{', '}'},
+  };
+
+  for (const char & entry : s)
+  {
+    if (lookup.count(entry))
+      left_chars.emplace(entry);
+    else
+    {
+      if (left_chars.empty() || lookup[left_chars.top()] != entry)
+        return false;
+      left_chars.pop();
+    }
+  }
+  return left_chars.empty();
 }
 
 int main(int argc, char* argv[]) {
