@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "queue": "cpp",
+        "iterator": "cpp",
+        "vector": "cpp"
+    },
+    "editor.formatOnSave": true
+}
