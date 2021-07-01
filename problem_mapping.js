@@ -1242,7 +1242,7 @@ problem_mapping = {
         },
         "10.03 Sort an almost-sorted array": {
             "C++: sort_almost_sorted_array.cc": {
-                "passed": 0,
+                "passed": 101,
                 "total": 101
             },
             "Java: SortAlmostSortedArray.java": {
