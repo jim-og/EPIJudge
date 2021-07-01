@@ -7,8 +7,10 @@
 #include "test_framework/test_utils.h"
 using std::vector;
 
-struct Star {
-  bool operator<(const Star& that) const {
+struct Star
+{
+  bool operator<(const Star &that) const
+  {
     return Distance() < that.Distance();
   }
 
@@ -18,41 +20,74 @@ struct Star {
 };
 
 vector<Star> FindClosestKStars(vector<Star>::const_iterator stars_begin,
-                               const vector<Star>::const_iterator& stars_end,
-                               int k) {
-  // TODO - you fill in here.
-  return {};
+                               const vector<Star>::const_iterator &stars_end,
+                               int k)
+{
+  std::vector<Star> results;
+  std::priority_queue<Star, std::vector<Star>> max_heap;
+
+  vector<Star>::const_iterator it = stars_begin;
+  for (int i = 0; i < k; ++i)
+  {
+    max_heap.emplace(*it);
+    ++it;
+  }
+
+  while (it != stars_end)
+  {
+    max_heap.emplace(*it);
+    max_heap.pop();
+    ++it;
+  }
+
+  while (!max_heap.empty())
+  {
+    results.emplace_back(max_heap.top());
+    max_heap.pop();
+  }
+
+  return results;
 }
 
-namespace test_framework {
-template <>
-struct SerializationTrait<Star> : UserSerTrait<Star, double, double, double> {};
-}  // namespace test_framework
+namespace test_framework
+{
+  template <>
+  struct SerializationTrait<Star> : UserSerTrait<Star, double, double, double>
+  {
+  };
+} // namespace test_framework
 
-std::ostream& operator<<(std::ostream& out, const Star& s) {
+std::ostream &operator<<(std::ostream &out, const Star &s)
+{
   return out << s.Distance();
 }
 
-bool Comp(const vector<double>& expected, vector<Star> output) {
-  if (output.size() != expected.size()) {
+bool Comp(const vector<double> &expected, vector<Star> output)
+{
+  if (output.size() != expected.size())
+  {
     return false;
   }
 
   std::sort(begin(output), end(output));
 
-  for (int i = 0; i < output.size(); ++i) {
-    if (!DefaultComparator()(output[i].Distance(), expected[i])) {
+  for (int i = 0; i < output.size(); ++i)
+  {
+    if (!DefaultComparator()(output[i].Distance(), expected[i]))
+    {
       return false;
     }
   }
   return true;
 }
 
-vector<Star> FindClosestKStarsWrapper(const vector<Star>& stars, int k) {
+vector<Star> FindClosestKStarsWrapper(const vector<Star> &stars, int k)
+{
   return FindClosestKStars(cbegin(stars), cend(stars), k);
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
   std::vector<std::string> args{argv + 1, argv + argc};
   std::vector<std::string> param_names{"stars", "k"};
   return GenericTestMain(args, "k_closest_stars.cc", "k_closest_stars.tsv",
