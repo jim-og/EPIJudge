@@ -1442,7 +1442,7 @@ problem_mapping = {
     "Chapter 12: Hash Tables": {
         "12.00 Bootcamp: Hash Tables": {
             "C++: anagrams.cc": {
-                "passed": 0,
+                "passed": 9,
                 "total": 9
             },
             "Java: Anagrams.java": {
