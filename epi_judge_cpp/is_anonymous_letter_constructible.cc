@@ -1,15 +1,30 @@
 #include <string>
+#include <unordered_map>
 
 #include "test_framework/generic_test.h"
 using std::string;
 
-bool IsLetterConstructibleFromMagazine(const string& letter_text,
-                                       const string& magazine_text) {
-  // TODO - you fill in here.
+bool IsLetterConstructibleFromMagazine(const string &letter_text,
+                                       const string &magazine_text)
+{
+  std::unordered_map<char, int> lookup;
+
+  for (const char &letter : magazine_text)
+    ++lookup[letter];
+
+  for (const char &letter : letter_text)
+  {
+    if (lookup.count(letter) && lookup[letter] > 0)
+      --lookup[letter];
+    else
+      return false;
+  }
+
   return true;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
   std::vector<std::string> args{argv + 1, argv + argc};
   std::vector<std::string> param_names{"letter_text", "magazine_text"};
   return GenericTestMain(args, "is_anonymous_letter_constructible.cc",
