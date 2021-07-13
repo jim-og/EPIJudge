@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <unordered_map>
 
 #include "test_framework/generic_test.h"
 #include "test_framework/test_failure.h"
@@ -9,40 +10,77 @@ using std::string;
 using std::unordered_set;
 using std::vector;
 
-struct Subarray {
+struct Subarray
+{
   int start, end;
 };
 
 Subarray FindSmallestSubarrayCoveringSet(
-    const vector<string> &paragraph, const unordered_set<string> &keywords) {
-  // TODO - you fill in here.
-  return {0, 0};
+    const vector<string> &paragraph, const unordered_set<string> &keywords)
+{
+  std::unordered_map<std::string, int> keywords_to_cover;
+  for (const std::string &keyword : keywords)
+    ++keywords_to_cover[keyword];
+
+  Subarray result = {-1, -1};
+
+  int remaining_to_cover = keywords.size();
+  for (int left = 0, right = 0; right < paragraph.size(); ++right)
+  {
+    // Keep advancing right until remaining_to_cover == 0
+    if (keywords.count(paragraph[right]) && --keywords_to_cover[paragraph[right]] >= 0)
+      --remaining_to_cover;
+
+    // Keep advancing left until keywords_to_cover does not contain
+    // all keywords.
+    while (remaining_to_cover == 0)
+    {
+      if ((result.start == -1 && result.end == -1) || right - left < result.end - result.start)
+      {
+        // Initial pass, or the distance between right and left is a new minimum
+        result = {left, right};
+      }
+
+      if (keywords.count(paragraph[left]) && ++keywords_to_cover[paragraph[left]] > 0)
+        ++remaining_to_cover;
+
+      ++left;
+    }
+  }
+
+  return result;
 }
 int FindSmallestSubarrayCoveringSetWrapper(
     TimedExecutor &executor, const vector<string> &paragraph,
-    const unordered_set<string> &keywords) {
+    const unordered_set<string> &keywords)
+{
   unordered_set<string> copy = keywords;
 
   auto result = executor.Run(
-      [&] { return FindSmallestSubarrayCoveringSet(paragraph, keywords); });
+      [&]
+      { return FindSmallestSubarrayCoveringSet(paragraph, keywords); });
 
   if (result.start < 0 || result.start >= paragraph.size() || result.end < 0 ||
-      result.end >= paragraph.size() || result.start > result.end) {
+      result.end >= paragraph.size() || result.start > result.end)
+  {
     throw TestFailure("Index out of range");
   }
 
-  for (int i = result.start; i <= result.end; i++) {
+  for (int i = result.start; i <= result.end; i++)
+  {
     copy.erase(paragraph[i]);
   }
 
-  if (!copy.empty()) {
+  if (!copy.empty())
+  {
     throw TestFailure("Not all keywords are in the range");
   }
 
   return result.end - result.start + 1;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   std::vector<std::string> args{argv + 1, argv + argc};
   std::vector<std::string> param_names{"executor", "paragraph", "keywords"};
   return GenericTestMain(args, "smallest_subarray_covering_set.cc",
